@@ -2,7 +2,7 @@ name: Build Android APK
 
 on:
   push:
-    branches: [ "main" ] # استبدل main باسم الفرع الخاص بك إذا كان مختلفاً
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -18,16 +18,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'zulu'
-        cache: gradle
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      continue-on-error: true
 
     - name: Build with Gradle
       run: ./gradlew assembleDebug
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
