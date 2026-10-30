@@ -19,9 +19,20 @@ jobs:
         java-version: '17'
         distribution: 'zulu'
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-      continue-on-error: true
+    - name: Find gradlew and Build
+      run: |
+        GRADLEW_PATH=$(find . -name gradlew -print -quit)
+        if [ -z "$GRADLEW_PATH" ]; then
+          echo "Error: gradlew file not found anywhere!"
+          exit 1
+        fi
+        DIR_PATH=$(dirname "$GRADLEW_PATH")
+        cd "$DIR_PATH"
+        chmod +x ./gradlew
+        ./gradlew assembleDebug
 
-    - name: Build with Gradle
-      run: ./gradlew assembleDebug
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-debug
+        path: "**/build/outputs/apk/debug/*.apk"
